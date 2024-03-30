@@ -62,6 +62,10 @@ module sberday_de10lite (
       wire  [15:0]  rom_out     ;       // VGA memory reading data
       reg   [15:0]  rom_reg     ;       // VGA memory registred reading data
       wire  [13:0]  read_address;       // VGA Memory reading address
+          //----------------------- ROM Ghost Image Read         --------------------------//
+      wire  [15:0]  rom_ghost_out     ;       // VGA memory reading data
+      reg   [15:0]  rom_ghost_reg     ;       // VGA memory registred reading data
+      wire  [13:0]  read_ghost_address;       // VGA Memory reading address
     //----------------------- JoyStick                     --------------------------//
       // JoyStick Cross
         wire js_button_a, js_button_a_u, js_button_a_d;
@@ -246,9 +250,31 @@ module sberday_de10lite (
       .clock    ( vga_clk        ),
       .q        ( rom_out        )
     );
+	  //------------------------- ROM Ghost                 ---------------------------//
+    always @(posedge vga_clk or negedge arst_n) begin //Sber logo memory reading
+      if      ( !arst_n )
+        rom_ghost_reg <= 16'h0;
+      else if ( rom_ghost_out == 16'h0 )  //If value 0 print zero
+        rom_ghost_reg <= 16'h0;
+      else                          //If value not 0 print green
+        rom_ghost_reg <= 16'h0f00;
+    end
+    
+    assign read_ghost_address = (col-ghost_border_hl_c) -255 + (row - ghost_border_hl_r)* 128;
+   // assign read_ghost_address = col -255 + row * 128;
+ 
+    rom rom_ghost(
+      .address ( {read_ghost_address, 1'b0} ),
+      .clock (vga_clk),
+      .q (rom_ghost_out)
+    );
 	 
 	   wire [9:0]   stick_border_hl_c;
      wire  [8:0]   stick_border_hl_r;
+     
+     wire   [9:0]     ghost_border_hl_c;
+     wire   [8:0]     ghost_border_hl_r;
+
   //------------------------- Demo                         ----------------------------//
     demo demo_module (
       //--------------------- Clock & Reset                ----------------------------//
@@ -268,6 +294,7 @@ module sberday_de10lite (
         .js_button_f_d          ( js_button_f_d   ),
       //--------------------- Memory data for logo         ----------------------------//
         .rom_data               ( rom_reg         ),  
+        .rom_ghost_data         ( rom_ghost_reg ),
       //--------------------- Pixcels Coordinates          ----------------------------//
         .col                    ( col[9:0]        ),  // only bottom 10 bits needed to count to 640
         .row                    ( row[8:0]        ),  // only bottom  9 bits needed to count to 480
@@ -280,7 +307,10 @@ module sberday_de10lite (
       //--------------------- Demo regime status           ----------------------------//
         .demo_regime_status     ( demo_regime_status  ),   // Red led on the board which show REGIME
 		  .stick_border_hl_c (stick_border_hl_c),
-		  .stick_border_hl_r(stick_border_hl_r)
+		  .stick_border_hl_r(stick_border_hl_r),
+      
+      .enemy_1_border_hl_c (ghost_border_hl_c),
+      .enemy_1_border_hl_r (ghost_border_hl_r)
     );
 
 endmodule
