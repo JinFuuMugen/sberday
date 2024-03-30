@@ -26,7 +26,10 @@ module demo (
   //--------- Switches for background colour     --------//
     input  [2:0]   SW              ,
   //--------- Regime                             --------//
-    output [1:0]   demo_regime_status    // Red led on the board which show REGIME
+    output [1:0]   demo_regime_status,    // Red led on the board which show REGIME
+	 
+	  output reg[9:0]   stick_border_hl_c,
+     output  reg[8:0]   stick_border_hl_r
 );
   
   //------------------------- Variables                    ----------------------------//
@@ -44,12 +47,12 @@ module demo (
       wire         regime_overflow;
       wire         accel_overflow;
     //----------------------- Stick movement               --------------------------//
-      parameter    stick_width  = 4; 
-      parameter    stick_height = 10; 
+      parameter    stick_width  = 128; 
+      parameter    stick_height = 128; 
       reg          stick_active;
       reg          indicator;
-      reg  [9:0]   stick_border_hl_c;
-      reg  [8:0]   stick_border_hl_r;
+//      reg  [9:0]   stick_border_hl_c;
+//      reg  [8:0]   stick_border_hl_r;
     //----------------------- Sber logo timer              --------------------------//
       reg [31:0]   sber_logo_counter; // 32 bit timer
 
@@ -97,11 +100,11 @@ module demo (
           if      ( (!js_button_d) && accel_overflow && (stick_border_hl_c != 0  ) ) begin
             stick_border_hl_c <= stick_border_hl_c - 1; 
           end
-          else if ( (!js_button_b) && accel_overflow && (stick_border_hl_c != 639) ) begin
+          else if ( (!js_button_b) && accel_overflow && (stick_border_hl_c != 639-stick_width) ) begin
             stick_border_hl_c <= stick_border_hl_c + 1; 
           end
           //
-          if      ( (!js_button_c) && accel_overflow && (stick_border_hl_r != 479) ) begin
+          if      ( (!js_button_c) && accel_overflow && (stick_border_hl_r != 479-stick_height) ) begin
             stick_border_hl_r <= stick_border_hl_r + 1; 
           end
           else if ( (!js_button_a) && accel_overflow && (stick_border_hl_r != 0  ) ) begin
@@ -166,7 +169,7 @@ module demo (
       else begin
         stick_active      <= (col >= stick_border_hl_c) & (col <= (stick_border_hl_c + stick_width)) & 
                              (row >= stick_border_hl_r) & (row <= (stick_border_hl_r + stick_height));  
-        indicator         <= 1;      
+        indicator         <= 0;      
       end
     end
    
