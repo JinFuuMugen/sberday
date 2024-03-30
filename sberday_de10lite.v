@@ -242,7 +242,7 @@ module sberday_de10lite (
     //(640-128)/2=256 & (480-128)/2=176.
     assign read_address = (col - stick_border_hl_c) - 255 + ((row - stick_border_hl_r))*128; 
     rom rom (
-      .address  ( read_address   ),
+      .address  ( {read_address, 1'b0}   ),
       .clock    ( vga_clk        ),
       .q        ( rom_out        )
     );
