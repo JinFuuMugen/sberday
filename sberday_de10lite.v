@@ -310,7 +310,7 @@ module sberday_de10lite (
 		  .stick_border_hl_r(stick_border_hl_r),
 
       .ghost_border_hl_c (enemy_1_border_hl_c),
-      .ghost_border_hl_r (enemy_border_hl_r)
+      .ghost_border_hl_r (enemy_1_border_hl_r)
     );
 
 endmodule
