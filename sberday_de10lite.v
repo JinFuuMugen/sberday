@@ -240,12 +240,15 @@ module sberday_de10lite (
     
     //Screen resoulution is 640x480, the logo size is 128x128. We need to put the logo in the center.
     //(640-128)/2=256 & (480-128)/2=176.
-    assign read_address = col - 255 + (row - 175)*128; 
+    assign read_address = (col - stick_border_hl_c) - 255 + ((row - stick_border_hl_r))*128; 
     rom rom (
       .address  ( read_address   ),
       .clock    ( vga_clk        ),
       .q        ( rom_out        )
     );
+	 
+	   wire [9:0]   stick_border_hl_c;
+     wire  [8:0]   stick_border_hl_r;
   //------------------------- Demo                         ----------------------------//
     demo demo_module (
       //--------------------- Clock & Reset                ----------------------------//
@@ -275,7 +278,9 @@ module sberday_de10lite (
       //--------------------- Switches for demo            ----------------------------//
         .SW                     ( SW [2:0]            ),  // We are using switches to change background
       //--------------------- Demo regime status           ----------------------------//
-        .demo_regime_status     ( demo_regime_status  )   // Red led on the board which show REGIME
+        .demo_regime_status     ( demo_regime_status  ),   // Red led on the board which show REGIME
+		  .stick_border_hl_c (stick_border_hl_c),
+		  .stick_border_hl_r(stick_border_hl_r)
     );
 
 endmodule
