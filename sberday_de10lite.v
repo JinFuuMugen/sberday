@@ -261,7 +261,7 @@ module sberday_de10lite (
         rom_ghost_reg <= 16'h0FAA;
     end
     
-    assign read_ghost_address = (col) + row * 256;
+    assign read_ghost_address = (col - ghost_border_hl_c) - 191 + ((row - ghost_border_hl_r)) * 256;
 
     rom_ghost rom_ghost(
       .address ( read_ghost_address ),

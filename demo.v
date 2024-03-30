@@ -19,6 +19,7 @@ module demo (
     input  [8:0]   row             , 
   //--------- Data from memory with logo         --------//
     input  [15:0]  rom_data        ,
+    input  [15:0]  rom_ghost_data  ,
   //--------- VGA outputs                        --------//
     output [3:0]   red             ,  // 4-bit color output
     output [3:0]   green           ,  // 4-bit color output
@@ -29,7 +30,7 @@ module demo (
     output [1:0]   demo_regime_status,    // Red led on the board which show REGIME
 	 
 	  output reg[9:0]   stick_border_hl_c,
-     output  reg[8:0]   stick_border_hl_r
+    output  reg[8:0]   stick_border_hl_r
 );
   
   //------------------------- Variables                    ----------------------------//
@@ -51,8 +52,6 @@ module demo (
       parameter    stick_height = 128; 
       reg          stick_active;
       reg          indicator;
-//      reg  [9:0]   stick_border_hl_c;
-//      reg  [8:0]   stick_border_hl_r;
     //----------------------- Sber logo timer              --------------------------//
       reg [31:0]   sber_logo_counter; // 32 bit timer
 
